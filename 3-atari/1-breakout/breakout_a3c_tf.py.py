@@ -7,7 +7,6 @@ import tensorflow as tf
 from skimage.color import rgb2gray
 from skimage.transform import resize
 from keras.models import Model
-from keras.optimizers import RMSprop, TFOptimizer
 from keras.layers import Dense, Flatten, Input
 from keras.layers.convolutional import Conv2D
 from keras import backend as K
@@ -32,13 +31,13 @@ class A3CAgent:
         self.no_op_steps = 30
 
         # optimizer parameters
-        self.lr = 2.5e-4
+        self.lr = 5e-4
         self.threads = 8
 
         # create model for actor and critic network
         self.model = self.build_model()
 
-        self.optimizer = tf.train.RMSPropOptimizer(learning_rate=self.lr)
+        self.optimizer = tf.train.RMSPropOptimizer(learning_rate=self.lr, decay=.99)
 
         self.sess = tf.InteractiveSession()
         K.set_session(self.sess)
@@ -318,7 +317,7 @@ class Agent(threading.Thread):
 
         policy_loss = cross_entropy + 0.01*entropy
 
-        value_loss = K.sum(K.square(discounted_reward - value))
+        value_loss = K.mean(K.square(discounted_reward - value))
 
         loss = policy_loss + 0.5*value_loss
         grads, _ = tf.clip_by_global_norm(tf.gradients(loss,
