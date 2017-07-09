@@ -31,7 +31,7 @@ class A3CAgent:
         self.no_op_steps = 30
 
         # optimizer parameters
-        self.lr = 5e-4
+        self.lr = 2.5e-4
         self.threads = 8
 
         # create model for actor and critic network
